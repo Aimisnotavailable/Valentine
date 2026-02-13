@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>BE MINE OR ELSE?</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Courier+Prime:wght@700&family=Arial:wght@700&display=swap');
+
+        body {
+            margin: 0; padding: 0; background-color: #ffdde1; font-family: 'Arial', sans-serif;
+            height: 100vh; width: 100vw; display: flex; flex-direction: column; align-items: center; justify-content: center;
+            overflow: hidden; touch-action: none; cursor: none !important; 
+            transition: background-color 0.5s ease;
+        }
+
+        /* --- MODES --- */
+        body.gloom { background-color: #546e7a; }
+        
+        /* HACKER MODE */
+        body.hacker {
+            background-color: #000000;
+            font-family: 'Courier Prime', monospace;
+        }
+        body.hacker h1 { color: #00ff00; text-shadow: 0 0 10px #00ff00; }
+        
+        /* HACKER CAT TRANSFORMATION */
+        body.hacker .cat-body, 
+        body.hacker .cat-head, 
+        body.hacker .ear, 
+        body.hacker .arm-stick,
+        body.hacker .paw-fist { 
+            background-color: #000 !important; 
+            border: 2px solid #00ff00 !important; 
+            box-shadow: 0 0 10px #00ff00; 
+        }
+        body.hacker .ear::after { background-color: #003300; } 
+        body.hacker .nose { background-color: #00ff00; box-shadow: 0 0 5px #00ff00; }
+        body.hacker .pupil { background-color: #00ff00; box-shadow: 0 0 5px #00ff00; }
+        body.hacker .bean-main, body.hacker .bean-toe { background-color: #00ff00; }
+
+        /* --- HAPPY CAT MODE (The New Fixes) --- */
+        
+        /* 1. HEART EYES FIX */
+        /* We use !important to override the Hacker Green Borders if they are active */
+        .cat-head.happy .eye {
+            background: transparent !important;
+            border: none !important;
+            box-shadow: none !important;
+            overflow: visible !important; /* Crucial: lets the heart lobes stick out */
+        }
+        .cat-head.happy .pupil { display: none; }
+
+        .cat-head.happy .eye::before, 
+        .cat-head.happy .eye::after {
+            content: "";
+            position: absolute;
+            width: 18px;
+            height: 28px;
+            background: #d81b60; /* Heart Color */
+            border-radius: 18px 18px 0 0;
+            top: 2px;
+        }
+        .cat-head.happy .eye::before {
+            left: 18px;
+            transform: rotate(-45deg);
+            transform-origin: 0 100%;
+        }
+        .cat-head.happy .eye::after {
+            left: 0px;
+            transform: rotate(45deg);
+            transform-origin: 100% 100%;
+        }
+
+        /* 2. CUTE SMILE FIX */
+        .happy-mouth {
+            display: none; /* Hidden by default */
+            position: absolute;
+            top: 110px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 30px;
+            height: 18px;
+            background: #5a192f;
+            border-radius: 0 0 30px 30px; /* Perfect semi-circle */
+            overflow: hidden;
+            z-index: 30;
+        }
+        /* Little Tongue */
+        .happy-mouth::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 18px;
+            height: 10px;
+            background: #ff99aa;
+            border-radius: 50%;
+        }
+        
+        /* Toggle Styles when Happy */
+        .cat-head.happy .mouth-wrapper { display: none !important; }
+        .cat-head.happy .happy-mouth { display: block !important; }
+        
+        /* --- GLITCH ANIMATION --- */
+        .glitch-anim { animation: glitch 0.2s cubic-bezier(.25, .46, .45, .94) both infinite; }
+        @keyframes glitch {
+            0% { transform: translate(0); }
+            20% { transform: translate(-5px, 5px); }
+            40% { transform: translate(-5px, -5px); }
+            60% { transform: translate(5px, 5px); }
+            80% { transform: translate(5px, -5px); }
+            100% { transform: translate(0); }
+        }
+
+        /* --- CURSOR --- */
+        #custom-cursor {
+            position: fixed; width: 25px; height: 25px; background: #ff4081; border-radius: 50%;
+            border: 3px solid white; box-shadow: 0 0 10px rgba(0,0,0,0.2); pointer-events: none; z-index: 10000; transform: translate(-50%, -50%);
+        }
+
+        /* --- STAGE --- */
+        .stage-container {
+            position: relative; transform-origin: bottom center; transition: transform 0.3s ease;
+            display: flex; justify-content: center; align-items: flex-end; transform: scale(1);
+        }
+        @media (max-width: 600px) { .stage-container { transform: scale(0.85); } }
+
+        .cat-wrapper {
+            position: relative; width: 300px; height: 350px; display: flex;
+            justify-content: center; align-items: flex-end; margin-bottom: 20px;
+        }
+
+        /* --- SPEECH BUBBLE --- */
+        .speech-bubble {
+            position: absolute; top: -140px; left: 50%; transform: translateX(-50%) scale(0);
+            background: white; padding: 15px; border-radius: 20px; border: 3px solid #ff4081;
+            z-index: 100; transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            pointer-events: none; text-align: center; width: 250px; font-weight: bold; font-size: 1.1rem;
+            box-shadow: 5px 5px 0px rgba(0,0,0,0.1);
+        }
+        .speech-bubble::after {
+            content: ''; position: absolute; bottom: -15px; left: 50%; transform: translateX(-50%);
+            border-width: 15px 15px 0; border-style: solid; border-color: #ff4081 transparent transparent transparent;
+        }
+        .speech-bubble.show { transform: translateX(-50%) scale(1); }
+        
+        body.hacker .speech-bubble {
+            background: black; border: 2px solid #00ff00; color: #00ff00; font-family: 'Courier Prime', monospace;
+            box-shadow: 0 0 15px #00ff00;
+        }
+        body.hacker .speech-bubble::after { border-color: #00ff00 transparent transparent transparent; }
+
+        /* --- CAT PARTS --- */
+        .cat-body {
+            width: 180px; height: 160px; background-color: #ffffff; border-radius: 90px 90px 40px 40px; position: relative; z-index: 10;
+            transition: background-color 0.5s;
+        }
+        .cat-head {
+            position: absolute; top: 70px; left: 50%; transform: translateX(-50%); width: 170px; height: 150px; background-color: #ffffff;
+            border-radius: 45%; z-index: 20; box-shadow: 0 5px 15px rgba(0,0,0,0.08); transition: transform 0.2s, background-color 0.5s;
+        }
+
+        .ear { position: absolute; top: -20px; width: 50px; height: 60px; background-color: #ffffff; border-radius: 15px; z-index: 5; transition: background-color 0.5s; }
+        .ear.left { left: 15px; transform: rotate(-20deg); }
+        .ear.right { right: 15px; transform: rotate(20deg); }
+        .ear::after { content: ''; position: absolute; top: 10px; left: 10px; width: 30px; height: 40px; background-color: #f0f0f0; border-radius: 10px; }
+
+        .eye { position: absolute; top: 55px; width: 36px; height: 36px; background: white; border-radius: 50%; overflow: hidden; z-index: 25; border: 2px solid #333; transition: all 0.3s;}
+        body.hacker .eye { border-color: #00ff00; background: black; }
+        .eye.left { left: 38px; }
+        .eye.right { right: 38px; }
+        .pupil { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 16px; height: 16px; background: #333; border-radius: 50%; }
+
+        .nose { position: absolute; top: 95px; left: 50%; transform: translateX(-50%); width: 16px; height: 10px; background: #ffacc7; border-radius: 40%; z-index: 25; }
+        
+        /* Normal Mouth */
+        .mouth-wrapper { position: absolute; top: 100px; left: 50%; transform: translateX(-50%); width: 60px; height: 20px; z-index: 25; display: flex; justify-content: center; }
+        .smile-left, .smile-right { width: 15px; height: 10px; border-bottom: 3px solid #333; border-radius: 0 0 50% 50%; margin: 0 -1px; }
+        body.hacker .smile-left, body.hacker .smile-right { border-color: #00ff00; }
+
+        /* --- ARM --- */
+        .arm-pivot { position: absolute; top: 140px; right: 40px; width: 20px; height: 20px; z-index: 5; pointer-events: none; }
+        .arm-stick { position: absolute; top: 0; left: 0; width: 35px; height: 0; background: #ffffff; border-radius: 20px; transform-origin: top center; transition: background-color 0.5s; }
+        .paw-fist { position: absolute; bottom: -15px; left: -5px; width: 45px; height: 45px; background: white; border-radius: 50%; display: none; overflow: hidden; transition: background-color 0.5s;}
+        .bean-main { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 20px; height: 18px; background: #ffacc7; border-radius: 40% 40% 45% 45%; }
+        .bean-toe { position: absolute; width: 8px; height: 8px; background: #ffacc7; border-radius: 50%; }
+        .bean-1 { top: 6px; left: 6px; } .bean-2 { top: 2px; left: 18px; } .bean-3 { top: 6px; left: 30px; }
+
+        /* --- UI --- */
+        .ui-container { text-align: center; z-index: 100; padding: 0 20px; position: relative; }
+        h1 { color: #d81b60; font-size: 2.5rem; margin-bottom: 20px; text-shadow: 1px 1px 0px white; }
+        .buttons { display: flex; gap: 30px; justify-content: center; position: relative; height: 60px; align-items: center; }
+        button { padding: 15px 45px; font-size: 1.5rem; border: none; border-radius: 50px; cursor: none !important; font-weight: bold; transition: all 0.2s; box-shadow: 0 4px 0 rgba(0,0,0,0.1); position: relative; }
+        button:hover { transform: scale(1.15) translateY(-2px); }
+        
+        #btn-yes { background-color: #66bb6a; color: white; }
+        #btn-no { background-color: #ef5350; color: white; min-width: 120px; z-index: 101;}
+
+        /* HACKER BUTTONS */
+        body.hacker #btn-yes { background-color: #00ff00; color: black; box-shadow: 0 0 10px #00ff00; font-family: 'Courier Prime', monospace;}
+        body.hacker #btn-no { background-color: #333; color: red; border: 1px solid red; font-family: 'Courier Prime', monospace;}
+
+        /* RAINING YES BUTTONS */
+        .falling-btn {
+            position: fixed; background: #66bb6a; color: white; border: 2px solid #fff;
+            padding: 10px 25px; border-radius: 50px; font-weight: bold; cursor: none !important;
+            box-shadow: 0 4px 5px rgba(0,0,0,0.2); z-index: 9999; animation: spinAndFall 3s linear forwards;
+        }
+        body.hacker .falling-btn {
+            background: #00ff00; color: black; border: 1px solid #003300; box-shadow: 0 0 10px #00ff00;
+        }
+        @keyframes spinAndFall {
+            0% { transform: translateY(0) rotate(0deg); }
+            100% { transform: translateY(100vh) rotate(360deg); }
+        }
+
+        /* --- FAKE TERMINAL --- */
+        #threat-overlay {
+            display: none;
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(0,0,0,0.9);
+            z-index: 20000;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: #00ff00;
+            font-family: 'Courier Prime', monospace;
+        }
+        .terminal-box {
+            width: 80%; max-width: 500px; background: black; border: 2px solid red; padding: 20px;
+            box-shadow: 0 0 20px red; text-align: left;
+        }
+        .progress-container { width: 100%; height: 20px; background: #333; margin-top: 10px; border: 1px solid red; }
+        .progress-bar { width: 0%; height: 100%; background: red; transition: width 0.1s; }
+        
+        /* FINAL MSG */
+        #final-msg-container { display: none; flex-direction: column; align-items: center; gap: 20px; }
+        #final-msg-text { font-size: 2rem; color: #d81b60; font-weight: bold; }
+        #happy-gif { width: 200px; border-radius: 20px; }
+
+    </style>
+</head>
+<body>
+
+    <div id="custom-cursor"></div>
+
+    <div id="threat-overlay">
+        <div class="terminal-box">
+            <div id="terminal-text">> REJECTION DETECTED.<br>> ACCESSING FILES...<br></div>
+            <div class="progress-container">
+                <div class="progress-bar" id="hack-bar"></div>
+            </div>
+            <div id="hack-status" style="margin-top:5px; color:red;">DELETING SYSTEM32... 0%</div>
+        </div>
+    </div>
+
+    <div class="stage-container" id="stage-container">
+        <div class="cat-wrapper">
+            <div class="speech-bubble" id="speech-bubble">
+                <span id="bubble-text">...</span>
+            </div>
+
+            <div class="cat-body"></div>
+            
+            <div class="arm-pivot" id="arm-pivot">
+                <div class="arm-stick" id="arm-stick">
+                    <div class="paw-fist" id="paw-fist">
+                        <div class="bean-main"></div>
+                        <div class="bean-toe bean-1"></div>
+                        <div class="bean-toe bean-2"></div>
+                        <div class="bean-toe bean-3"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="cat-head" id="cat-head">
+                <div class="ear left"></div>
+                <div class="ear right"></div>
+                
+                <div class="eye left"><div class="pupil"></div></div>
+                <div class="eye right"><div class="pupil"></div></div>
+
+                <div class="nose"></div>
+                
+                <div class="mouth-wrapper">
+                    <div class="smile-left"></div>
+                    <div class="smile-right"></div>
+                </div>
+
+                <div class="happy-mouth"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="ui-container">
+        <div id="initial-question-area">
+            <h1 id="main-title">Will you be my Valentine?</h1>
+            <div class="buttons" id="btn-group">
+                <button id="btn-yes">YES</button>
+                <button id="btn-no">NO</button>
+            </div>
+        </div>
+
+        <div id="final-msg-container">
+            <div id="final-msg-text">Good choice. I cancelled the virus. ❤️</div>
+            <img id="happy-gif" src="https://i.pinimg.com/originals/52/47/1e/52471e5ee4d2c953127091efac41de23.gif">
+        </div>
+    </div>
+
+    <script>
+        const cursor = document.getElementById('custom-cursor');
+        const pupils = document.querySelectorAll('.pupil');
+        const armPivot = document.getElementById('arm-pivot');
+        const armStick = document.getElementById('arm-stick');
+        const pawFist = document.getElementById('paw-fist');
+        const btnNo = document.getElementById('btn-no');
+        const btnYes = document.getElementById('btn-yes');
+        const stageContainer = document.getElementById('stage-container');
+        const speechBubble = document.getElementById('speech-bubble');
+        const bubbleText = document.getElementById('bubble-text');
+        const mainTitle = document.getElementById('main-title');
+        
+        let mouseX = 0, mouseY = 0;
+        let isAnimating = false;
+        let yesScale = 1;
+        let noClickCount = 0;
+
+        // --- FUNNY TEXTS ---
+        const threatLevels = [
+            "Are you sure?", 
+            "I'm warning you...", 
+            "Don't make me do it.", 
+            "Acquiring IP Address...", 
+            "IP Found: 127.0.0.1 (LOL)",
+            "Downloading 'GroupChatLogs.txt'...",
+            "Leaking search history in 3... 2...", 
+            "I know where you live.", 
+            "I'm in your walls.", 
+            "DELETE WINDOWS? (Y/N)",
+            "Nice shirt you're wearing.",
+            "Say goodbye to your files :)"
+        ];
+
+        // --- MOUSE TRACKING ---
+        function handleMove(clientX, clientY) {
+            mouseX = clientX;
+            mouseY = clientY;
+            cursor.style.left = mouseX + 'px';
+            cursor.style.top = mouseY + 'px';
+
+            pupils.forEach(pupil => {
+                const rect = pupil.getBoundingClientRect();
+                const x = rect.left + rect.width/2;
+                const y = rect.top + rect.height/2;
+                const angle = Math.atan2(clientY - y, clientX - x);
+                const dist = Math.min(6, Math.hypot(clientX - x, clientY - y) / 12);
+                pupil.style.transform = `translate(-50%, -50%) translate(${Math.cos(angle)*dist}px, ${Math.sin(angle)*dist}px)`;
+            });
+        }
+        document.addEventListener('mousemove', (e) => handleMove(e.clientX, e.clientY));
+        document.addEventListener('touchmove', (e) => handleMove(e.touches[0].clientX, e.touches[0].clientY), { passive: false });
+
+        // --- ATTACK ANIMATION ---
+        btnNo.addEventListener('click', (e) => {
+            if(isAnimating) return;
+            isAnimating = true;
+            speechBubble.classList.remove('show');
+
+            // --- 1. THE SWIPE ---
+            const style = window.getComputedStyle(stageContainer);
+            const matrix = new WebKitCSSMatrix(style.transform);
+            const currentScale = matrix.a;
+            
+            const btnRect = btnNo.getBoundingClientRect();
+            const targetX = btnRect.left + btnRect.width / 2;
+            const targetY = btnRect.top + btnRect.height / 2;
+            const pivotRect = armPivot.getBoundingClientRect();
+            
+            const deltaX = targetX - (pivotRect.left + pivotRect.width/2);
+            const deltaY = targetY - (pivotRect.top + pivotRect.height/2);
+            const angleDeg = (Math.atan2(deltaY, deltaX) * (180/Math.PI)) - 90; 
+            const dist = Math.hypot(deltaX, deltaY) / currentScale;
+
+            armPivot.style.transform = `rotate(${angleDeg}deg)`;
+            pawFist.style.display = 'block';
+
+            requestAnimationFrame(() => {
+                armStick.style.height = (dist - 20) + 'px';
+            });
+
+            // --- 2. THE IMPACT ---
+            setTimeout(() => { 
+                moveButtonRandomly(btnNo);
+                noClickCount++;
+                escalateThreats(); 
+                
+                // Shake Screen
+                document.body.classList.add('glitch-anim');
+                setTimeout(() => document.body.classList.remove('glitch-anim'), 300);
+
+                // Grow YES
+                yesScale += 0.5;
+                btnYes.style.transform = `scale(${yesScale})`;
+            }, 100);
+            
+            // --- 3. RETRACT ---
+            setTimeout(() => { armStick.style.height = '0'; }, 400);
+            setTimeout(() => {
+                pawFist.style.display = 'none';
+                armPivot.style.transform = 'rotate(0deg)';
+                isAnimating = false;
+            }, 600);
+        });
+
+        // --- CHAOS LOGIC ---
+        function escalateThreats() {
+            let text = threatLevels[Math.min(noClickCount, threatLevels.length - 1)];
+            if(noClickCount > 8) text = "ERROR 404: MERCY NOT FOUND";
+
+            bubbleText.innerText = text;
+            speechBubble.classList.add('show');
+
+            // LEVEL 1: Gloom
+            if(noClickCount >= 2 && noClickCount < 5) {
+                document.body.classList.add('gloom');
+                btnNo.innerText = "NOPE";
+            }
+
+            // LEVEL 2: HACKER MODE
+            if(noClickCount === 5) {
+                document.body.classList.remove('gloom');
+                document.body.classList.add('hacker');
+                mainTitle.innerText = "SYSTEM COMPROMISED";
+                btnNo.innerText = "HELP";
+                btnYes.innerText = "SAVE ME";
+            }
+
+            // LEVEL 3: RAINING YES
+            if(noClickCount >= 5) {
+                spawnFallingYes(3);
+            }
+
+            // LEVEL 4: FAKE VIRUS
+            if(noClickCount === 8) {
+                runFakeVirus();
+            }
+        }
+
+        // --- FALLING YES BUTTONS ---
+        function spawnFallingYes(amount) {
+            for(let i=0; i<amount; i++) {
+                const btn = document.createElement('button');
+                btn.innerText = "YES";
+                btn.className = 'falling-btn';
+                btn.style.left = Math.random() * 90 + 'vw';
+                btn.style.top = '-50px';
+                btn.style.animationDuration = (Math.random() * 2 + 2) + 's';
+                btn.addEventListener('click', acceptLove);
+                document.body.appendChild(btn);
+            }
+        }
+
+        function runFakeVirus() {
+            const overlay = document.getElementById('threat-overlay');
+            const bar = document.getElementById('hack-bar');
+            const status = document.getElementById('hack-status');
+            
+            overlay.style.display = 'flex';
+            
+            let width = 0;
+            const interval = setInterval(() => {
+                if (width >= 99) {
+                    clearInterval(interval);
+                    status.innerText = "ERROR: USER IS TOO CUTE TO DELETE.";
+                    status.style.color = "#00ff00";
+                    setTimeout(() => {
+                        overlay.style.display = 'none';
+                        bubbleText.innerText = "Just kidding. DATE ME.";
+                    }, 2000);
+                } else {
+                    width++;
+                    bar.style.width = width + '%';
+                    status.innerText = `DELETING SYSTEM32... ${width}%`;
+                }
+            }, 30);
+        }
+
+        function moveButtonRandomly(button) {
+            const rect = button.getBoundingClientRect();
+            button.style.position = 'fixed'; 
+            button.style.left = rect.left + 'px';
+            button.style.top = rect.top + 'px';
+            
+            const speed = noClickCount > 5 ? 0.2 : 0.5;
+            
+            requestAnimationFrame(() => {
+                button.style.transition = `all ${speed}s ease`;
+                button.style.left = Math.random() * (window.innerWidth - 100) + 'px';
+                button.style.top = Math.random() * (window.innerHeight - 50) + 'px';
+            });
+        }
+
+        // --- HAPPY ENDING ---
+        function acceptLove() {
+            // 1. Remove Scary Stuff
+            document.body.classList.remove('hacker');
+            document.body.classList.remove('gloom');
+            document.body.style.backgroundColor = "#ffc1e3";
+            
+            // 2. MAKE CAT HAPPY
+            document.getElementById('cat-head').classList.add('happy');
+
+            // 3. UI Updates
+            document.getElementById('initial-question-area').style.display = 'none';
+            document.getElementById('threat-overlay').style.display = 'none';
+            document.getElementById('final-msg-container').style.display = 'flex';
+            speechBubble.style.display = 'none';
+            
+            // 4. Remove falling buttons
+            document.querySelectorAll('.falling-btn').forEach(b => b.remove());
+
+            // 5. Confetti
+            for(let i=0; i<100; i++) {
+                const conf = document.createElement('div');
+                conf.style.position = 'fixed';
+                conf.style.width = '10px'; conf.style.height = '10px';
+                conf.style.background = ['#f00','#0f0','#00f'][Math.floor(Math.random()*3)];
+                conf.style.left = Math.random()*100+'vw';
+                conf.style.top = '-10px';
+                conf.style.animation = `fall ${Math.random()*2+2}s linear forwards`;
+                document.body.appendChild(conf);
+            }
+            
+            const style = document.createElement('style');
+            style.innerHTML = `@keyframes fall { to { transform: translateY(100vh) rotate(720deg); } }`;
+            document.head.appendChild(style);
+        }
+
+        btnYes.addEventListener('click', acceptLove);
+    </script>
+</body>
+</html>
