@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>BE MINE OR ELSE</title>
+    <title>BE MINE OR ELSE?</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Courier+Prime:wght@700&family=Arial:wght@700&display=swap');
 
@@ -24,12 +24,13 @@
         }
         body.hacker h1 { color: #00ff00; text-shadow: 0 0 10px #00ff00; }
         
-        /* HACKER CAT TRANSFORMATION */
+        /* HACKER VISUALS */
         body.hacker .cat-body, 
         body.hacker .cat-head, 
         body.hacker .ear, 
         body.hacker .arm-stick, 
-        body.hacker .paw-fist { 
+        body.hacker .paw-fist,
+        body.hacker .tail { 
             background-color: #000 !important; 
             border: 2px solid #00ff00 !important; 
             box-shadow: 0 0 10px #00ff00; 
@@ -37,18 +38,7 @@
         body.hacker .ear::after { background-color: #003300; } 
         body.hacker .nose { background-color: #00ff00; box-shadow: 0 0 5px #00ff00; }
         body.hacker .pupil { background-color: #00ff00; box-shadow: 0 0 5px #00ff00; }
-        body.hacker .bean-main, body.hacker .bean-toe { background-color: #00ff00; }
-
-        /* --- GLITCH ANIMATION --- */
-        .glitch-anim { animation: glitch 0.2s cubic-bezier(.25, .46, .45, .94) both infinite; }
-        @keyframes glitch {
-            0% { transform: translate(0); }
-            20% { transform: translate(-5px, 5px); }
-            40% { transform: translate(-5px, -5px); }
-            60% { transform: translate(5px, 5px); }
-            80% { transform: translate(5px, -5px); }
-            100% { transform: translate(0); }
-        }
+        body.hacker .cheek { display: none !important; }
 
         /* --- CURSOR --- */
         #custom-cursor {
@@ -68,6 +58,147 @@
             justify-content: center; align-items: flex-end; margin-bottom: 20px;
         }
 
+        /* --- TAIL FIXED --- */
+        .tail {
+            position: absolute; bottom: 40px; right: 20px; 
+            width: 120px; height: 25px;
+            background-color: #ffffff;
+            border-radius: 25px;
+            z-index: 1;
+            transform-origin: left center;
+            transform: rotate(-20deg);
+            animation: tailWag 1s infinite ease-in-out alternate;
+        }
+        @keyframes tailWag {
+            0% { transform: rotate(-20deg); }
+            100% { transform: rotate(10deg); }
+        }
+
+        /* --- BODY & HEAD --- */
+        .cat-body { width: 180px; height: 160px; background-color: #ffffff; border-radius: 90px 90px 40px 40px; position: relative; z-index: 10; transition: background-color 0.5s; }
+        
+        .cat-head { 
+            position: absolute; top: 70px; left: 50%; margin-left: -85px;
+            width: 170px; height: 150px; background-color: #ffffff; border-radius: 45%; 
+            z-index: 20; box-shadow: 0 5px 15px rgba(0,0,0,0.08); 
+            transition: background-color 0.5s; 
+            animation: headBob 3s infinite ease-in-out;
+        }
+        
+        @keyframes headBob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(5px); } }
+
+        /* AGGRESSIVE HEAD SHAKE (NO) */
+        .cat-head.shaking { animation: headShake 0.15s infinite !important; }
+        @keyframes headShake {
+            0% { transform: translateX(0) rotate(0); }
+            25% { transform: translateX(-10px) rotate(-10deg); }
+            75% { transform: translateX(10px) rotate(10deg); }
+            100% { transform: translateX(0) rotate(0); }
+        }
+
+        /* PURR & BLUSH (YES) */
+        .cat-head.purring { animation: purrVibrate 0.1s infinite !important; }
+        @keyframes purrVibrate {
+            0% { transform: translate(0,0) rotate(2deg); }
+            50% { transform: translate(1px, -1px) rotate(-2deg); }
+            100% { transform: translate(0,0) rotate(2deg); }
+        }
+
+        .ear { position: absolute; top: -20px; width: 50px; height: 60px; background-color: #ffffff; border-radius: 15px; z-index: 5; transition: background-color 0.5s; }
+        .ear.left { left: 15px; transform: rotate(-20deg); }
+        .ear.right { right: 15px; transform: rotate(20deg); }
+        .ear::after { content: ''; position: absolute; top: 10px; left: 10px; width: 30px; height: 40px; background-color: #f0f0f0; border-radius: 10px; }
+        
+        /* EYES */
+        .eye { 
+            position: absolute; top: 55px; width: 36px; height: 36px; background: white; border-radius: 50%; 
+            overflow: hidden; z-index: 25; border: 2px solid #333; transition: all 0.3s;
+            animation: blink 4s infinite;
+        }
+        @keyframes blink { 0%, 96%, 100% { transform: scaleY(1); } 98% { transform: scaleY(0.1); } }
+
+        body.hacker .eye { border-color: #00ff00; background: black; }
+        .eye.left { left: 38px; }
+        .eye.right { right: 38px; }
+        .pupil { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 16px; height: 16px; background: #333; border-radius: 50%; }
+
+        /* CHEEKS (BLUSH) */
+        .cheek {
+            position: absolute; top: 95px; width: 25px; height: 15px; background: #ffb7b2; 
+            border-radius: 50%; z-index: 22; opacity: 0; filter: blur(3px); transition: opacity 0.3s;
+        }
+        .cheek.left { left: 25px; }
+        .cheek.right { right: 25px; }
+        
+        /* Blush triggers */
+        .cat-head.purring .cheek, 
+        .cat-head.happy .cheek { opacity: 1; }
+
+        /* EXPRESSIONS */
+        .cat-head.shocked .eye { height: 40px; width: 40px; top: 53px; animation: none; }
+        .cat-head.shocked .pupil { width: 5px; height: 5px; } /* Tiny pupils */
+        .cat-head.shocked .mouth-wrapper { display: none; }
+        .cat-head.shocked .mouth-o { display: block; }
+
+        .cat-head.angry .eye::before {
+            content: ''; position: absolute; top: -10px; left: -5px; width: 150%; height: 20px;
+            background: #ffffff; transform: rotate(20deg); z-index: 10;
+        }
+        .cat-head.angry .eye.right::before { transform: rotate(-20deg); }
+        body.hacker .cat-head.angry .eye::before { background: #000000; }
+
+        /* MOUTHS */
+        .nose { position: absolute; top: 95px; left: 50%; transform: translateX(-50%); width: 16px; height: 10px; background: #ffacc7; border-radius: 40%; z-index: 25; }
+        .mouth-wrapper { position: absolute; top: 100px; left: 50%; transform: translateX(-50%); width: 60px; height: 20px; z-index: 25; display: flex; justify-content: center; }
+        .smile-left, .smile-right { width: 15px; height: 10px; border-bottom: 3px solid #333; border-radius: 0 0 50% 50%; margin: 0 -1px; }
+        body.hacker .smile-left, body.hacker .smile-right { border-color: #00ff00; }
+
+        .mouth-o {
+            display: none; position: absolute; top: 105px; left: 50%; transform: translateX(-50%);
+            width: 15px; height: 15px; background: #5a192f; border-radius: 50%; z-index: 26;
+        }
+
+        .happy-mouth {
+            display: none; position: absolute; top: 110px; left: 50%; transform: translateX(-50%);
+            width: 30px; height: 18px; background: #5a192f; border-radius: 0 0 30px 30px; overflow: hidden; z-index: 30;
+        }
+        .happy-mouth::after {
+            content: ''; position: absolute; bottom: -5px; left: 50%; transform: translateX(-50%);
+            width: 18px; height: 10px; background: #ff99aa; border-radius: 50%;
+        }
+        .cat-head.happy .mouth-wrapper, .cat-head.happy .mouth-o { display: none !important; }
+        .cat-head.happy .happy-mouth { display: block !important; }
+        .cat-head.happy .eye { background: transparent !important; border: none !important; box-shadow: none !important; overflow: visible !important; animation: none; }
+        .cat-head.happy .pupil { display: none; }
+        .cat-head.happy .eye::before, .cat-head.happy .eye::after {
+            content: ""; position: absolute; width: 18px; height: 28px; background: #d81b60; border-radius: 18px 18px 0 0; top: 2px;
+        }
+        .cat-head.happy .eye::before { left: 18px; transform: rotate(-45deg); transform-origin: 0 100%; }
+        .cat-head.happy .eye::after { left: 0px; transform: rotate(45deg); transform-origin: 100% 100%; }
+
+        /* --- ARM --- */
+        .arm-pivot { position: absolute; top: 140px; right: 40px; width: 20px; height: 20px; z-index: 5; pointer-events: none; }
+        .arm-stick { position: absolute; top: 0; left: 0; width: 35px; height: 0; background: #ffffff; border-radius: 20px; transform-origin: top center; transition: background-color 0.5s; }
+        .paw-fist { position: absolute; bottom: -15px; left: -5px; width: 45px; height: 45px; background: white; border-radius: 50%; display: none; overflow: hidden; transition: background-color 0.5s;}
+        .bean-main { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 20px; height: 18px; background: #ffacc7; border-radius: 40% 40% 45% 45%; }
+        .bean-toe { position: absolute; width: 8px; height: 8px; background: #ffacc7; border-radius: 50%; }
+        .bean-1 { top: 6px; left: 6px; } .bean-2 { top: 2px; left: 18px; } .bean-3 { top: 6px; left: 30px; }
+
+        /* --- UI --- */
+        .ui-container { text-align: center; z-index: 100; padding: 0 20px; position: relative; }
+        h1 { color: #d81b60; font-size: 2.5rem; margin-bottom: 20px; text-shadow: 1px 1px 0px white; }
+        .buttons { display: flex; gap: 30px; justify-content: center; position: relative; height: 60px; align-items: center; }
+        button { padding: 15px 45px; font-size: 1.5rem; border: none; border-radius: 50px; cursor: none !important; font-weight: bold; transition: all 0.2s; box-shadow: 0 4px 0 rgba(0,0,0,0.1); position: relative; }
+        button:hover { transform: scale(1.15) translateY(-2px); }
+        
+        #btn-yes { background-color: #66bb6a; color: white; }
+        #btn-no { background-color: #ef5350; color: white; min-width: 150px; z-index: 101;}
+
+        /* HACKER BUTTONS */
+        body.hacker #btn-yes { background-color: #00ff00; color: black; box-shadow: 0 0 10px #00ff00; font-family: 'Courier Prime', monospace;}
+        body.hacker #btn-no { background-color: #333; color: red; border: 1px solid red; font-family: 'Courier Prime', monospace;}
+
+        /* SPEECH BUBBLE */
         .speech-bubble {
             position: absolute; top: -140px; left: 50%; transform: translateX(-50%) scale(0);
             background: white; padding: 15px; border-radius: 20px; border: 3px solid #ff4081;
@@ -87,95 +218,6 @@
         }
         body.hacker .speech-bubble::after { border-color: #00ff00 transparent transparent transparent; }
 
-        /* --- CAT PARTS --- */
-        .cat-body { width: 180px; height: 160px; background-color: #ffffff; border-radius: 90px 90px 40px 40px; position: relative; z-index: 10; transition: background-color 0.5s; }
-        .cat-head { position: absolute; top: 70px; left: 50%; transform: translateX(-50%); width: 170px; height: 150px; background-color: #ffffff; border-radius: 45%; z-index: 20; box-shadow: 0 5px 15px rgba(0,0,0,0.08); transition: transform 0.2s, background-color 0.5s; }
-        .ear { position: absolute; top: -20px; width: 50px; height: 60px; background-color: #ffffff; border-radius: 15px; z-index: 5; transition: background-color 0.5s; }
-        .ear.left { left: 15px; transform: rotate(-20deg); }
-        .ear.right { right: 15px; transform: rotate(20deg); }
-        .ear::after { content: ''; position: absolute; top: 10px; left: 10px; width: 30px; height: 40px; background-color: #f0f0f0; border-radius: 10px; }
-        
-        /* EYES & EMOTIONS */
-        .eye { position: absolute; top: 55px; width: 36px; height: 36px; background: white; border-radius: 50%; overflow: hidden; z-index: 25; border: 2px solid #333; transition: all 0.3s;}
-        body.hacker .eye { border-color: #00ff00; background: black; }
-        .eye.left { left: 38px; }
-        .eye.right { right: 38px; }
-        .pupil { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 16px; height: 16px; background: #333; border-radius: 50%; transition: width 0.2s, height 0.2s; }
-        
-        /* SHOCKED EXPRESSION (Hovering NO) */
-        .cat-head.shocked .eye { height: 40px; width: 40px; top: 53px; }
-        .cat-head.shocked .pupil { width: 10px; height: 10px; }
-        .cat-head.shocked .mouth-wrapper { display: none; }
-        .cat-head.shocked .mouth-o { display: block; }
-        
-        /* ANGRY EXPRESSION (Clicking NO) */
-        .cat-head.angry .eye::before {
-            content: ''; position: absolute; top: -10px; left: -5px; width: 150%; height: 20px;
-            background: #ffffff; transform: rotate(20deg); z-index: 10;
-        }
-        .cat-head.angry .eye.right::before { transform: rotate(-20deg); }
-        
-        /* HACKER ANGRY (Background matches black) */
-        body.hacker .cat-head.angry .eye::before { background: #000000; }
-
-        /* NOSE & MOUTH */
-        .nose { position: absolute; top: 95px; left: 50%; transform: translateX(-50%); width: 16px; height: 10px; background: #ffacc7; border-radius: 40%; z-index: 25; }
-        
-        .mouth-wrapper { position: absolute; top: 100px; left: 50%; transform: translateX(-50%); width: 60px; height: 20px; z-index: 25; display: flex; justify-content: center; }
-        .smile-left, .smile-right { width: 15px; height: 10px; border-bottom: 3px solid #333; border-radius: 0 0 50% 50%; margin: 0 -1px; }
-        body.hacker .smile-left, body.hacker .smile-right { border-color: #00ff00; }
-
-        /* SHOCKED MOUTH (O-Shape) */
-        .mouth-o {
-            display: none; position: absolute; top: 105px; left: 50%; transform: translateX(-50%);
-            width: 15px; height: 15px; background: #5a192f; border-radius: 50%; z-index: 26;
-        }
-        body.hacker .mouth-o { background: #00ff00; }
-
-        /* FINAL HAPPY MODE */
-        .cat-head.happy .eye { background: transparent !important; border: none !important; box-shadow: none !important; overflow: visible !important; }
-        .cat-head.happy .pupil { display: none; }
-        .cat-head.happy .eye::before, .cat-head.happy .eye::after {
-            content: ""; position: absolute; width: 18px; height: 28px;
-            background: #d81b60; border-radius: 18px 18px 0 0; top: 2px;
-        }
-        .cat-head.happy .eye::before { left: 18px; transform: rotate(-45deg); transform-origin: 0 100%; }
-        .cat-head.happy .eye::after { left: 0px; transform: rotate(45deg); transform-origin: 100% 100%; }
-        
-        .happy-mouth {
-            display: none; position: absolute; top: 110px; left: 50%; transform: translateX(-50%);
-            width: 30px; height: 18px; background: #5a192f; border-radius: 0 0 30px 30px; overflow: hidden; z-index: 30;
-        }
-        .happy-mouth::after {
-            content: ''; position: absolute; bottom: -5px; left: 50%; transform: translateX(-50%);
-            width: 18px; height: 10px; background: #ff99aa; border-radius: 50%;
-        }
-        .cat-head.happy .mouth-wrapper { display: none !important; }
-        .cat-head.happy .mouth-o { display: none !important; }
-        .cat-head.happy .happy-mouth { display: block !important; }
-
-        /* --- ARM --- */
-        .arm-pivot { position: absolute; top: 140px; right: 40px; width: 20px; height: 20px; z-index: 5; pointer-events: none; }
-        .arm-stick { position: absolute; top: 0; left: 0; width: 35px; height: 0; background: #ffffff; border-radius: 20px; transform-origin: top center; transition: background-color 0.5s; }
-        .paw-fist { position: absolute; bottom: -15px; left: -5px; width: 45px; height: 45px; background: white; border-radius: 50%; display: none; overflow: hidden; transition: background-color 0.5s;}
-        .bean-main { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 20px; height: 18px; background: #ffacc7; border-radius: 40% 40% 45% 45%; }
-        .bean-toe { position: absolute; width: 8px; height: 8px; background: #ffacc7; border-radius: 50%; }
-        .bean-1 { top: 6px; left: 6px; } .bean-2 { top: 2px; left: 18px; } .bean-3 { top: 6px; left: 30px; }
-
-        /* --- UI --- */
-        .ui-container { text-align: center; z-index: 100; padding: 0 20px; position: relative; }
-        h1 { color: #d81b60; font-size: 2.5rem; margin-bottom: 20px; text-shadow: 1px 1px 0px white; }
-        .buttons { display: flex; gap: 30px; justify-content: center; position: relative; height: 60px; align-items: center; }
-        button { padding: 15px 45px; font-size: 1.5rem; border: none; border-radius: 50px; cursor: none !important; font-weight: bold; transition: all 0.2s; box-shadow: 0 4px 0 rgba(0,0,0,0.1); position: relative; }
-        button:hover { transform: scale(1.15) translateY(-2px); }
-        
-        #btn-yes { background-color: #66bb6a; color: white; }
-        #btn-no { background-color: #ef5350; color: white; min-width: 120px; z-index: 101;}
-
-        /* HACKER BUTTONS */
-        body.hacker #btn-yes { background-color: #00ff00; color: black; box-shadow: 0 0 10px #00ff00; font-family: 'Courier Prime', monospace;}
-        body.hacker #btn-no { background-color: #333; color: red; border: 1px solid red; font-family: 'Courier Prime', monospace;}
-
         /* RAINING YES BUTTONS */
         .falling-btn {
             position: fixed; background: #66bb6a; color: white; border: 2px solid #fff;
@@ -185,10 +227,7 @@
         body.hacker .falling-btn {
             background: #00ff00; color: black; border: 1px solid #003300; box-shadow: 0 0 10px #00ff00;
         }
-        @keyframes spinAndFall {
-            0% { transform: translateY(0) rotate(0deg); }
-            100% { transform: translateY(100vh) rotate(360deg); }
-        }
+        @keyframes spinAndFall { 0% { transform: translateY(0) rotate(0deg); } 100% { transform: translateY(100vh) rotate(360deg); } }
 
         /* --- FAKE TERMINAL --- */
         #threat-overlay {
@@ -196,16 +235,10 @@
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             background: rgba(0,0,0,0.9);
             z-index: 20000;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            color: #00ff00;
-            font-family: 'Courier Prime', monospace;
+            flex-direction: column; justify-content: center; align-items: center;
+            color: #00ff00; font-family: 'Courier Prime', monospace;
         }
-        .terminal-box {
-            width: 80%; max-width: 500px; background: black; border: 2px solid red; padding: 20px;
-            box-shadow: 0 0 20px red; text-align: left;
-        }
+        .terminal-box { width: 80%; max-width: 500px; background: black; border: 2px solid red; padding: 20px; box-shadow: 0 0 20px red; text-align: left; }
         .progress-container { width: 100%; height: 20px; background: #333; margin-top: 10px; border: 1px solid red; }
         .progress-bar { width: 0%; height: 100%; background: red; transition: width 0.1s; }
         
@@ -213,6 +246,17 @@
         #final-msg-container { display: none; flex-direction: column; align-items: center; gap: 20px; }
         #final-msg-text { font-size: 2rem; color: #d81b60; font-weight: bold; }
         #happy-gif { width: 200px; border-radius: 20px; }
+
+        /* GLITCH ANIMATION */
+        .glitch-anim { animation: glitch 0.2s cubic-bezier(.25, .46, .45, .94) both infinite; }
+        @keyframes glitch {
+            0% { transform: translate(0); }
+            20% { transform: translate(-5px, 5px); }
+            40% { transform: translate(-5px, -5px); }
+            60% { transform: translate(5px, 5px); }
+            80% { transform: translate(5px, -5px); }
+            100% { transform: translate(0); }
+        }
 
     </style>
 </head>
@@ -224,50 +268,41 @@
     <audio id="sound-yes" src="https://www.myinstants.com/media/sounds/happy-happy-happy-cat.mp3" loop></audio>
     <audio id="sound-glitch" src="https://actions.google.com/sounds/v1/science_fiction/scifi_noise_bleep.ogg"></audio>
     <audio id="sound-typing" src="https://actions.google.com/sounds/v1/foley/keyboard_typing_fast.ogg"></audio>
-    <audio id="sound-alarm" src="https://actions.google.com/sounds/v1/alarms/alarm_clock.ogg" loop></audio>
+    <audio id="sound-alarm" src="https://github.com/Ariel-C01/public-audio/blob/main/alarm.mp3?raw=true" loop></audio>
 
     <div id="threat-overlay">
         <div class="terminal-box">
             <div id="terminal-text">> REJECTION DETECTED.<br>> ACCESSING FILES...<br></div>
-            <div class="progress-container">
-                <div class="progress-bar" id="hack-bar"></div>
-            </div>
+            <div class="progress-container"><div class="progress-bar" id="hack-bar"></div></div>
             <div id="hack-status" style="margin-top:5px; color:red;">DELETING SYSTEM32... 0%</div>
         </div>
     </div>
 
     <div class="stage-container" id="stage-container">
         <div class="cat-wrapper">
-            <div class="speech-bubble" id="speech-bubble">
-                <span id="bubble-text">...</span>
-            </div>
-
+            <div class="speech-bubble" id="speech-bubble"><span id="bubble-text">...</span></div>
+            
+            <div class="tail"></div>
             <div class="cat-body"></div>
             
             <div class="arm-pivot" id="arm-pivot">
                 <div class="arm-stick" id="arm-stick">
                     <div class="paw-fist" id="paw-fist">
                         <div class="bean-main"></div>
-                        <div class="bean-toe bean-1"></div>
-                        <div class="bean-toe bean-2"></div>
-                        <div class="bean-toe bean-3"></div>
+                        <div class="bean-toe bean-1"></div><div class="bean-toe bean-2"></div><div class="bean-toe bean-3"></div>
                     </div>
                 </div>
             </div>
 
             <div class="cat-head" id="cat-head">
-                <div class="ear left"></div>
-                <div class="ear right"></div>
-                
+                <div class="ear left"></div><div class="ear right"></div>
                 <div class="eye left"><div class="pupil"></div></div>
                 <div class="eye right"><div class="pupil"></div></div>
+                
+                <div class="cheek left"></div><div class="cheek right"></div>
 
                 <div class="nose"></div>
-                
-                <div class="mouth-wrapper">
-                    <div class="smile-left"></div>
-                    <div class="smile-right"></div>
-                </div>
+                <div class="mouth-wrapper"><div class="smile-left"></div><div class="smile-right"></div></div>
                 <div class="mouth-o"></div>
                 <div class="happy-mouth"></div>
             </div>
@@ -276,7 +311,7 @@
 
     <div class="ui-container">
         <div id="initial-question-area">
-            <h1 id="main-title">Will you be my Valentine?</h1>
+            <h1 id="main-title">BE MINE OR ELSE?</h1>
             <div class="buttons" id="btn-group">
                 <button id="btn-yes">YES</button>
                 <button id="btn-no">NO</button>
@@ -316,30 +351,37 @@
         let noClickCount = 0;
         let isHacker = false;
 
-        // --- FUNNY TEXTS ---
         const threatLevels = [
-            "Are you sure?", 
-            "I'm warning you...", 
-            "Don't make me do it.", 
-            "Acquiring IP Address...", 
-            "IP Found: 127.0.0.1 (LOL)",
-            "Downloading 'GroupChatLogs.txt'...",
-            "Leaking search history in 3... 2...", 
-            "I know where you live.", 
-            "I'm in your walls.", 
-            "DELETE WINDOWS? (Y/N)",
-            "Nice shirt you're wearing.",
-            "Say goodbye to your files :)"
+            "Are you sure?", "I'm warning you...", "Don't make me do it.", 
+            "Acquiring IP Address...", "IP Found: 127.0.0.1 (LOL)",
+            "Downloading 'GroupChatLogs.txt'...", "Leaking search history...", 
+            "I know where you live.", "I'm in your walls.", "DELETE WINDOWS? (Y/N)"
+        ];
+        
+        const noButtonTexts = [
+            "NO", "Are you sure?", "Really?", "Don't do it", "Please?", 
+            "Have a heart!", "I'm crying", "Stop it!", "HELP", "ERROR"
         ];
 
         // --- EXPRESSION HANDLERS ---
-        
-        // 1. Hover on "No" = Shocked
         btnNo.addEventListener('mouseenter', () => {
-            if (!isHacker && !isAnimating) catHead.classList.add('shocked');
+            if (!isHacker && !isAnimating) {
+                catHead.classList.add('shocked', 'shaking');
+            }
         });
         btnNo.addEventListener('mouseleave', () => {
-            if (!isHacker) catHead.classList.remove('shocked');
+            if (!isHacker) {
+                catHead.classList.remove('shocked', 'shaking');
+            }
+        });
+
+        btnYes.addEventListener('mouseenter', () => {
+            if (!isHacker && !isAnimating) {
+                catHead.classList.add('purring');
+            }
+        });
+        btnYes.addEventListener('mouseleave', () => {
+            catHead.classList.remove('purring');
         });
 
         // --- MOUSE TRACKING ---
@@ -367,22 +409,16 @@
             isAnimating = true;
             speechBubble.classList.remove('show');
             
-            // Set Angry Face temporarily
-            catHead.classList.remove('shocked');
+            catHead.classList.remove('shocked', 'shaking');
             catHead.classList.add('angry');
 
             // --- AUDIO LOGIC ---
-            soundGlitch.currentTime = 0;
-            soundGlitch.volume = 0.4;
-            soundGlitch.play().catch(e => {});
-
+            soundGlitch.currentTime = 0; soundGlitch.volume = 0.5; soundGlitch.play().catch(e=>{});
             if(noClickCount < 5) {
-                soundNo.currentTime = 0;
-                soundNo.volume = 0.5;
-                soundNo.play().catch(e => {});
+                soundNo.currentTime = 0; soundNo.volume = 1.0; soundNo.play().catch(e=>{});
             }
 
-            // --- 1. THE SWIPE ---
+            // --- THE SWIPE ---
             const style = window.getComputedStyle(stageContainer);
             const matrix = new WebKitCSSMatrix(style.transform);
             const currentScale = matrix.a;
@@ -400,82 +436,60 @@
             armPivot.style.transform = `rotate(${angleDeg}deg)`;
             pawFist.style.display = 'block';
 
-            requestAnimationFrame(() => {
-                armStick.style.height = (dist - 20) + 'px';
-            });
+            requestAnimationFrame(() => { armStick.style.height = (dist - 20) + 'px'; });
 
-            // --- 2. THE IMPACT ---
+            // --- THE IMPACT ---
             setTimeout(() => { 
                 moveButtonRandomly(btnNo);
                 noClickCount++;
                 escalateThreats(); 
-                
-                // Shake Screen
                 document.body.classList.add('glitch-anim');
                 setTimeout(() => document.body.classList.remove('glitch-anim'), 300);
-
-                // Grow YES
                 yesScale += 0.5;
                 btnYes.style.transform = `scale(${yesScale})`;
             }, 100);
             
-            // --- 3. RETRACT ---
+            // --- RETRACT ---
             setTimeout(() => { armStick.style.height = '0'; }, 400);
             setTimeout(() => {
                 pawFist.style.display = 'none';
                 armPivot.style.transform = 'rotate(0deg)';
                 isAnimating = false;
-                
-                // Reset face unless Hacker Mode
-                if(!isHacker) {
-                    catHead.classList.remove('angry');
-                }
+                if(!isHacker) catHead.classList.remove('angry');
             }, 600);
         });
 
         // --- CHAOS LOGIC ---
         function escalateThreats() {
+            // Update Bubble Text
             let text = threatLevels[Math.min(noClickCount, threatLevels.length - 1)];
             if(noClickCount > 8) text = "ERROR 404: MERCY NOT FOUND";
-
             bubbleText.innerText = text;
             speechBubble.classList.add('show');
-            
-            // Play Typing Sound on text update
-            soundTyping.currentTime = 0;
-            soundTyping.volume = 0.5;
-            soundTyping.play().catch(e => {});
+            soundTyping.currentTime = 0; soundTyping.play().catch(e=>{});
 
-            // LEVEL 1: Gloom
+            // Update Button Text (Desperate/Funny)
+            let btnText = noButtonTexts[Math.min(noClickCount, noButtonTexts.length - 1)];
+            btnNo.innerText = btnText;
+
+            // Mode Switching
             if(noClickCount >= 2 && noClickCount < 5) {
                 document.body.classList.add('gloom');
-                btnNo.innerText = "NOPE";
             }
 
-            // LEVEL 2: HACKER MODE
             if(noClickCount === 5) {
                 isHacker = true;
                 document.body.classList.remove('gloom');
                 document.body.classList.add('hacker');
-                // Permanent Angry Face for Hacker
                 catHead.classList.add('angry');
                 mainTitle.innerText = "SYSTEM COMPROMISED";
-                btnNo.innerText = "HELP";
-                btnYes.innerText = "SAVE ME";
+                // We keep YES as YES per request, but NO button is already updating via array above
             }
 
-            // LEVEL 3: RAINING YES
-            if(noClickCount >= 5) {
-                spawnFallingYes(3);
-            }
-
-            // LEVEL 4: FAKE VIRUS
-            if(noClickCount === 8) {
-                runFakeVirus();
-            }
+            if(noClickCount >= 5) spawnFallingYes(3);
+            if(noClickCount === 8) runFakeVirus();
         }
 
-        // --- FALLING YES BUTTONS ---
         function spawnFallingYes(amount) {
             for(let i=0; i<amount; i++) {
                 const btn = document.createElement('button');
@@ -494,9 +508,10 @@
             const bar = document.getElementById('hack-bar');
             const status = document.getElementById('hack-status');
             
-            // Start Alarm
-            soundAlarm.volume = 0.3;
-            soundAlarm.play().catch(e => {});
+            // Trigger Alarm safely inside user interaction chain
+            soundAlarm.volume = 0.5; 
+            soundAlarm.currentTime = 0;
+            soundAlarm.play().catch(e => console.log("Audio blocked:", e));
 
             overlay.style.display = 'flex';
             
@@ -509,7 +524,7 @@
                     setTimeout(() => {
                         overlay.style.display = 'none';
                         bubbleText.innerText = "Just kidding. DATE ME.";
-                        soundAlarm.pause(); // Stop alarm
+                        soundAlarm.pause();
                     }, 2000);
                 } else {
                     width++;
@@ -524,46 +539,31 @@
             button.style.position = 'fixed'; 
             button.style.left = rect.left + 'px';
             button.style.top = rect.top + 'px';
-            
             const speed = noClickCount > 5 ? 0.2 : 0.5;
-            
             requestAnimationFrame(() => {
                 button.style.transition = `all ${speed}s ease`;
-                button.style.left = Math.random() * (window.innerWidth - 100) + 'px';
+                button.style.left = Math.random() * (window.innerWidth - 150) + 'px';
                 button.style.top = Math.random() * (window.innerHeight - 50) + 'px';
             });
         }
 
-        // --- HAPPY ENDING ---
         function acceptLove() {
-            // STOP HACKER SOUNDS
-            soundAlarm.pause();
-            soundAlarm.currentTime = 0;
+            soundAlarm.pause(); soundAlarm.currentTime = 0;
+            soundYes.volume = 0.5; soundYes.play();
             
-            // PLAY HAPPY MUSIC
-            soundYes.volume = 0.5;
-            soundYes.play();
-
-            // 1. Remove Scary Stuff
-            document.body.classList.remove('hacker');
-            document.body.classList.remove('gloom');
+            document.body.classList.remove('hacker', 'gloom');
             document.body.style.backgroundColor = "#ffc1e3";
             
-            // 2. MAKE CAT HAPPY
-            catHead.classList.remove('angry');
-            catHead.classList.remove('shocked');
+            catHead.classList.remove('angry', 'shocked', 'shaking', 'purring');
             catHead.classList.add('happy');
 
-            // 3. UI Updates
             document.getElementById('initial-question-area').style.display = 'none';
             document.getElementById('threat-overlay').style.display = 'none';
             document.getElementById('final-msg-container').style.display = 'flex';
             speechBubble.style.display = 'none';
-            
-            // 4. Remove falling buttons
             document.querySelectorAll('.falling-btn').forEach(b => b.remove());
 
-            // 5. Confetti
+            // CONFETTI
             for(let i=0; i<100; i++) {
                 const conf = document.createElement('div');
                 conf.style.position = 'fixed';
@@ -574,7 +574,6 @@
                 conf.style.animation = `fall ${Math.random()*2+2}s linear forwards`;
                 document.body.appendChild(conf);
             }
-            
             const style = document.createElement('style');
             style.innerHTML = `@keyframes fall { to { transform: translateY(100vh) rotate(720deg); } }`;
             document.head.appendChild(style);
